@@ -1,4 +1,7 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0(ya+_ybqm8=@9wo0kfzwi98@80sm%nh8#ktq2e989v=$l*6u2'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,7 +32,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'bodhidharaAPI'
+    'bodhidharaAPI',
+    'tfbAccountAPI',
 ]
 
 MIDDLEWARE = [
@@ -42,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
-EST_FRAMEWORK = {
+REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
@@ -52,7 +56,7 @@ ROOT_URLCONF = 'tfbFoundation.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'accountAPI', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,3 +127,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #Faceboook Access Key
 PAGE_ACCESS_TOKEN = 'EAAS6alMqIzMBO78YIQAOujDkStYJ48Y8poKMxqbA2G28ll2IQxhdJbQ0g6BI60eGKpL0Kd5nQGFZAyTGBpPOAAZAqLQD0BNjer4PrzqsBFSPcKP6dsB6Y81X2ozZBMdL3nPXmRCJXsganw7N05KRkLPooSA0ZCkb3P4q4GXEBx9C0gY1nV2sHFedEIDLCikZD'
 PAGE_ID = '101184084683270'
+
+#----------EMAIL SENDING START-----------
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
+#----------EMAIL SENDING END----------

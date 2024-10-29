@@ -3,5 +3,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('bodhidhara/', include('bodhidharaAPI.urls'), name='bodhidhara')
+    path('bodhidhara/', include('bodhidharaAPI.urls'), name='bodhidhara'),
+    path('account/', include('tfbAccountAPI.urls'), name='account'),
 ]
