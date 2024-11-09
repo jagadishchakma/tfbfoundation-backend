@@ -5,6 +5,7 @@ from rest_framework import status
 from .utilities.news_insert import news_insert
 from . import serializers
 from .models import BodhidharaNews
+from libs.get_client_ip import get_client_ip
 
 # bodhidhara news insert view
 class NewsInsertView(APIView):
@@ -42,3 +43,27 @@ class NewsView(ListAPIView):
     def get_queryset(self):
         return BodhidharaNews.objects.filter().order_by('-id')
         
+
+#---------- NEWS VIEWS COUNT START ----------
+class NewsViewCount(APIView):
+    def put(self, request):
+
+        news_id = request.data.get('news_id')
+        news = BodhidharaNews.objects.get(id=news_id)
+        
+        if request.user.is_authenticated:
+            visitor_id = request.user.id
+        else:
+            ip = get_client_ip(request)
+            visitor_id = ip
+            print('views count based on ip: ', ip)
+        
+        current_views = news.views or [] # Default to empty list if view is None
+        if visitor_id not in current_views:
+            current_views.append(visitor_id)
+            news.views = current_views
+            news.save()
+
+            return Response({'success':'News views success'}, status=status.HTTP_202_ACCEPTED)
+        return Response({'warning':'already this users views count'}, status=status.HTTP_226_IM_USED)
+#---------- NEWS VIEWS COUNT END ----------

@@ -8,6 +8,7 @@ class BodhidharaNews(models.Model):
     fb_video_ids =  models.JSONField(null=True, blank=True)
     fb_photo_ids = models.JSONField(null=True, blank=True)
     fb_post_react = models.JSONField(null=True, blank=True)
+    views = models.JSONField(default=list)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

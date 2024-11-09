@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from libs.time_calculate import time_calculate
 from libs.email_verification import send_verification_code
 from django.utils import timezone
-from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth import authenticate,login
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 
@@ -111,16 +111,13 @@ class ResendVerificationCodeView(APIView):
 #---------- user login view start ----------
 class AccountLoginView(APIView):
     def post(self,request):
-        username = request.data.get('username')
-        email = request.data.get('email')
+        user_email = request.data.get('user_email')
         password = request.data.get('password')
         try:
-            #if provide email instead username
-            if email:
-                user = User.objects.get(email=email)
-                username = user.username
-            #then....
-            user = authenticate(username=username,password=password)
+            user = authenticate(username=user_email,password=password)
+            if not user:
+                user2 = User.objects.filter(email=user_email).first()
+                user = authenticate(username=user2.username, password=password)
             if user:
                 login(request, user)
                 token, _ = Token.objects.get_or_create(user=user)
@@ -138,7 +135,8 @@ class AccountLogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self,request):
         try:
-            logout(request)
+            # logout(request) its used for session based authentication
+            request.user.auth_token.delete() #it's used for token based authentication
             return Response({'success':'User logged out successfully'}, status=status.HTTP_200_OK)
         except:
             return Response({'error':'User not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -161,7 +159,8 @@ class AccountGetView(APIView):
             serializer = UserSerializers(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        except User.DoesNotExist:
-            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print("get error: ", e)
+            return Response({'Error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 #---------- user account get view end ----------
 
