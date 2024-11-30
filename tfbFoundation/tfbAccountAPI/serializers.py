@@ -1,6 +1,6 @@
 #necessary module,file,code import
 from django.contrib.auth.models import User
-from .models import Profile, NewsSaved
+from .models import Profile
 from rest_framework import serializers
 import re
 
@@ -157,11 +157,3 @@ class UserSerializers(serializers.ModelSerializer):
         return user
 #----------user serializers end----------
 
-
-
-#---------- USER NEWS SAVED START ----------
-class UserNewsSavedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NewsSaved
-        fields = '__all__'
-#---------- USER NEWS SAVED END ----------

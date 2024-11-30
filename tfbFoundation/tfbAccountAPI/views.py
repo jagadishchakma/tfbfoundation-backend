@@ -2,7 +2,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializers, ProfileSerializers, UserNewsSavedSerializer
+from .serializers import UserSerializers, ProfileSerializers
 from libs.email_verification import send_verification_code
 from django.contrib.auth.models import User
 from libs.time_calculate import time_calculate
@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.contrib.auth import authenticate,login
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
-from .models import NewsSaved
 
 #----------user creation view use APIView for more controlling start----------
 class AccountCreateView(APIView):
@@ -166,22 +165,34 @@ class AccountGetView(APIView):
 #---------- user account get view end ----------
 
 
-#---------- USER NEWS SAVED VIEWS START ----------
-class UserNewsSavedView(APIView):
+class NewsSaved(APIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserNewsSavedSerializer
-    def post(self, request):
-        data = request.data
-        data['user'] = request.user.id 
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response('successfully news saved', status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def get(self, request):
-        news_save = NewsSaved.objects.filter(user=request.user)
-        serializer = self.serializer_class(news_save, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-#---------- USER NEWS SAVED VIEWS END ----------
+    def put(self, request):
+        user = request.user.profile
+        new_favorite_id = request.data.get('news_id')  # ID to be added to favorites
+
+        if not new_favorite_id:
+            return Response({"error": "ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Assume `favorites` is a JSONField on the user model
+            # Initialize the JSON field as an empty list if it's None
+            if user.favourites is None:
+                user.favourites = []
+
+            # Ensure `favourites` is a list
+            if not isinstance(user.favourites, list):
+                return Response({"error": "favourites must be a list"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Add the new ID if it's not already in the list
+            if new_favorite_id not in user.favourites:
+                user.favourites.append(new_favorite_id)
+                user.save()
+
+            return Response({"message": "Favorite added successfully", "favourites": user.favourites}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("hello")
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        

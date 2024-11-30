@@ -10,7 +10,3 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 
-#---------- USER NEWS SAVE MODEL REGISTER START ----------
-class SaveAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'news_id', 'created_at')
-#---------- USER NEWS SAVE MODEL REGISTER END ----------

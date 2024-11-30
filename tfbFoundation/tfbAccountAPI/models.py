@@ -14,11 +14,6 @@ class Profile(models.Model):
     account_type = models.CharField(max_length=200)
     verification_code = models.CharField(null=True,blank=True, max_length=5)
     created_at  = models.DateTimeField(auto_now_add=True)
-    
+    favourites = models.JSONField(default=list,blank=True)
     def __str__(self):
         return self.phone_no
-
-class NewsSaved(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved')
-    news_id = models.CharField(max_length=250)
-    created_at = models.DateTimeField(auto_now_add=True)
