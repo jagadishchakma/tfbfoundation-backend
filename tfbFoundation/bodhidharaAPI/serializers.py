@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import BodhidharaNews, Comment, Reply1, Reply2
+from .models import BodhidharaNews, BodhidharaNewsComment, BodhidharaNewsCommentReply1, BodhidharaNewsCommentReply2
 #BodhidharaNews Serializers
 class BodhadharaNewsSerializers(serializers.ModelSerializer):
     class Meta:
@@ -7,20 +7,20 @@ class BodhadharaNewsSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 #Comment Serializer
-class CommentSerializers(serializers.ModelSerializer):
+class BodhidharaNewsCommentSerializers(serializers.ModelSerializer):
     class Meta:
-        model = Comment 
+        model = BodhidharaNewsComment 
         fields = '__all__'
 
 #Reply1 Serializer
-class Reply1Serializers(serializers.ModelSerializer):
+class BodhidharaNewsCommentReply1Serializers(serializers.ModelSerializer):
     class Meta:
-        model = Reply1
+        model = BodhidharaNewsCommentReply1
         fields = '__all__'
 
 #Reply2 Serializer
-class Reply2Serializers(serializers.ModelSerializer):
+class BodhidharaNewsCommentReply2Serializers(serializers.ModelSerializer):
     class Meta:
-        model = Reply2 
+        model = BodhidharaNewsCommentReply2 
         fields = '__all__'
         
